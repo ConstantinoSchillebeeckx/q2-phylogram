@@ -19,4 +19,4 @@ plugin = qiime.plugin.Plugin(
     package='q2_phylogram'
 )
 
-importlib.import_module('q2_phylogram.make_d3_phylogram')
+importlib.import_module('q2_phylogram._phylogram')
