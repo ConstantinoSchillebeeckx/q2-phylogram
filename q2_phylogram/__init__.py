@@ -8,4 +8,4 @@
 
 __version__ = "0.0.0-dev"  # noqa
 
-import ._phylogram
+import q2_phylogram._phylogram
