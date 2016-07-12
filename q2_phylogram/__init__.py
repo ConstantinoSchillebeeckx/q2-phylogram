@@ -8,4 +8,4 @@
 
 __version__ = "0.0.0-dev"  # noqa
 
-import make_d3_phylogram
+import .make_d3_phylogram
