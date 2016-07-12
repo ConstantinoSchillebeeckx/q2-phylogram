@@ -13,7 +13,7 @@ setup(
     # TODO stop duplicating version string
     version="0.0.0-dev",
     packages=find_packages(),
-    install_requires=['qiime >= 2.0.0', 'pandas', 'Bio'],
+    install_requires=['qiime >= 2.0.0', 'pandas', 'biopython'],
     author="Constantino Schillebeeckx",
     author_email="constantinoschillebeeckx@gmail.com",
     description="QIIME 2 plugin for generating interactive D3.js based phylogram.",
