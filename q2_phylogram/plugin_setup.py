@@ -10,8 +10,6 @@ import importlib
 
 import qiime.plugin
 
-import make_d3_phylogram
-
 from q2_phylogram import __version__
 
 plugin = qiime.plugin.Plugin(
@@ -21,3 +19,4 @@ plugin = qiime.plugin.Plugin(
     package='q2_phylogram'
 )
 
+importlib.import_module('q2_phylogram.make_d3_phylogram')
