@@ -121,7 +121,7 @@ plugin = qiime.plugin.Plugin(
 
 plugin.visualizers.register_function(
     function=make_d3_phylogram,
-    inputs={'pcoa': PCoAResults},
+    inputs={'Newick_tree': newick},
     parameters={'OTU_metadata': metadata},
     name='Visualize phylogram',
     description='Generate interactive visualization of your phylogenetic tree.'
