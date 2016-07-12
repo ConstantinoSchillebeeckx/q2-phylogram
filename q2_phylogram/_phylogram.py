@@ -106,7 +106,7 @@ def main (args):
         mapping_otus = set(mapping_df.index)
 
         if leaves > mapping_otus:
-            print "Not all leaves were found in the OTU mapping file; as a consequence, these leaves cannot be styled."
+            print("Not all leaves were found in the OTU mapping file; as a consequence, these leaves cannot be styled.")
 
 
     # CONSTRUCT BODY TAG
@@ -131,9 +131,9 @@ def main (args):
 
 
     # FEEDBACK
-    print "All your files have been written to the directory", root
-    print "Simply open the file index.html in a browser that has"
-    print "an internet connection to view the interactive phylogram."
+    print("All your files have been written to the directory", root)
+    print("Simply open the file index.html in a browser that has")
+    print("an internet connection to view the interactive phylogram.")
 
 
 # SETUP OPTION PARSER
@@ -154,7 +154,7 @@ if __name__ == '__main__':
     except SystemExit, e: # sys.exit()
         raise e
     except Exception, e:
-        print 'ERROR, UNEXPECTED EXCEPTION'
-        print str(e)
+        print('ERROR, UNEXPECTED EXCEPTION')
+        print(str(e))
         traceback.print_exc()
         os._exit(1)
