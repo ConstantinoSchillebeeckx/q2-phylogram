@@ -7,8 +7,3 @@
 # ----------------------------------------------------------------------------
 
 __version__ = "0.0.0-dev"  # noqa
-
-import make_d3_phylogram
-#from ._tree import Phylogeny
-
-#__all__ = ['DistanceMatrix', 'Phylogeny', 'PCoAResults', 'FeatureTable']
