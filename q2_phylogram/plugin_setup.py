@@ -69,15 +69,15 @@ template = '''
 # ------------------------------------------------------------------------------------------------------------#
 # ------------------------------------------------- MAIN -----------------------------------------------------#
 # ------------------------------------------------------------------------------------------------------------#
-def make_d3_phylogram(args):
+def make_d3_phylogram(output_dir: str, Newick: str, OTU_metadata: str):
 
     # ERROR CHECK INPUTS
-    if args.mapping:
+    if OTU_metadata:
 
-        tree = Phylo.read(args.newick, 'newick')
+        tree = Phylo.read(Newick, 'newick')
         leaves = set([l.name for l in tree.find_clades() if l.name])
 
-        mapping_df = pd.read_csv(args.mapping, sep='\t', index_col=0)
+        mapping_df = pd.read_csv(OTU_metadata, sep='\t', index_col=0)
         mapping_otus = set(mapping_df.index)
 
         if leaves > mapping_otus:
@@ -85,7 +85,7 @@ def make_d3_phylogram(args):
 
 
     # CONSTRUCT BODY TAG
-    if args.mapping:
+    if OTU_metadata:
         body = '<body onload="init(\'dat/tree.tre\', \'#phylogram\', \'dat/mapping.txt\');">' 
     else:
         body = '<body onload="init(\'dat/tree.tre\', \'#phylogram\');">' 
@@ -94,15 +94,15 @@ def make_d3_phylogram(args):
 
 
     # WRITE ALL OUR FILES
-    root = os.path.join(args.out,'phylogram_d3')
+    root = os.path.join(output_dir,'phylogram_d3')
     out_dir = os.path.join(root,'dat')
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
     with open(os.path.join(root,'index.html'), 'w') as fout:
         fout.write(index)
-    os.system('cp %s %s/tree.tre' %(args.newick, out_dir))
-    if args.mapping:
-        os.system('cp %s %s/mapping.txt' %(args.mapping, out_dir))
+    os.system('cp %s %s/tree.tre' %(Newick, out_dir))
+    if OTU_metadata:
+        os.system('cp %s %s/mapping.txt' %(OTU_metadata, out_dir))
 
 
     # FEEDBACK
