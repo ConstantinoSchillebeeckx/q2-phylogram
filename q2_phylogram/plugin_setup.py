@@ -28,11 +28,7 @@ import sys, os, argparse, traceback
 import pandas as pd
 import Bio
 
-def tree_to_biopython_phylo(data_dir):
-    with open(os.path.join(data_dir, 'tree.nwk'), 'r') as fh:
-        return Bio.Phylo.read(fh, 'newick')
 
-plugin.register_data_layout_reader('tree', 1, Bio.Phylo, tree_to_biopython_phylo)
 
 
 
@@ -73,11 +69,19 @@ template = '''
 </html>
 '''
 
+def tree_to_biopython_phylo(data_dir):
+    with open(os.path.join(data_dir, 'tree.nwk'), 'r') as fh:
+        return Bio.Phylo.read(fh, 'newick')
+
+plugin.register_data_layout_reader('tree', 1, Bio.Phylo, tree_to_biopython_phylo)
+
+
+
 
 # ------------------------------------------------------------------------------------------------------------#
 # ------------------------------------------------- MAIN -----------------------------------------------------#
 # ------------------------------------------------------------------------------------------------------------#
-def make_d3_phylogram(output_dir: str, tree: Bio.Phylo, otu_metadata: pd.DataFrame):
+def make_d3_phylogram(output_dir: str, tree: Bio.Phylo, otu_metadata: pd.DataFrame) -> None:
 
     # ERROR CHECK INPUTS
     if otu_metadata:
