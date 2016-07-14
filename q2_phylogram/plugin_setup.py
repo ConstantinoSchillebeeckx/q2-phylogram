@@ -19,7 +19,7 @@ examples:
 """
 import importlib
 
-import qiime.plugin
+from qiime.plugin import Plugin
 
 from q2_phylogram import __version__
 
@@ -27,9 +27,6 @@ from q2_phylogram import __version__
 import sys, os, argparse, traceback
 import pandas as pd
 import Bio
-
-
-
 
 
 template = '''
@@ -124,9 +121,9 @@ def make_d3_phylogram(output_dir: str, tree: Bio.Phylo, otu_metadata: pd.DataFra
 
 
 
-plugin = qiime.plugin.Plugin(
+plugin = Plugin(
     name='phylogram',
-    version=__version__,
+    version=q2_phylogram.__version__,
     website='https://github.com/ConstantinoSchillebeeckx/q2-phylogram',
     package='q2_phylogram'
 )
