@@ -132,9 +132,8 @@ plugin = qiime.plugin.Plugin(
 )
 
 plugin.visualizers.register_function(
-    function=make_d3_phylogram,
-    inputs={'tree': Bio.Phylo},
-    parameters={'otu_metadata': pd.DataFrame},
+    function=q2_phylogram.make_d3_phylogram,
+    inputs={'tree': Bio.Phylo, 'otu_metadata': pd.DataFrame},
     name='Visualize phylogram',
     description='Generate interactive visualization of your phylogenetic tree.'
 )
