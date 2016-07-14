@@ -20,7 +20,6 @@ examples:
 import importlib
 
 from qiime.plugin import Plugin
-
 from q2_phylogram import __version__
 
 # IMPORTS
@@ -123,7 +122,7 @@ def make_d3_phylogram(output_dir: str, tree: Bio.Phylo, otu_metadata: pd.DataFra
 
 plugin = Plugin(
     name='phylogram',
-    version=q2_phylogram.__version__,
+    version=__version__,
     website='https://github.com/ConstantinoSchillebeeckx/q2-phylogram',
     package='q2_phylogram'
 )
