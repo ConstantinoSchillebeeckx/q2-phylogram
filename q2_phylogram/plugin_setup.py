@@ -77,15 +77,15 @@ template = '''
 # ------------------------------------------------------------------------------------------------------------#
 # ------------------------------------------------- MAIN -----------------------------------------------------#
 # ------------------------------------------------------------------------------------------------------------#
-def make_d3_phylogram(output_dir: str, Newick: str, OTU_metadata: str):
+def make_d3_phylogram(output_dir: str, Newick: Bio.Phylo, otu_metadata: pd.DataFrame):
 
     # ERROR CHECK INPUTS
-    if OTU_metadata:
+    if otu_metadata:
 
         tree = Phylo.read(Newick, 'newick')
         leaves = set([l.name for l in tree.find_clades() if l.name])
 
-        mapping_df = pd.read_csv(OTU_metadata, sep='\t', index_col=0)
+        mapping_df = pd.read_csv(otu_metadata, sep='\t', index_col=0)
         mapping_otus = set(mapping_df.index)
 
         if leaves > mapping_otus:
@@ -129,8 +129,8 @@ plugin = qiime.plugin.Plugin(
 
 plugin.visualizers.register_function(
     function=make_d3_phylogram,
-    inputs={'Newick': str},
-    parameters={'OTU_metadata': str},
+    inputs={'Newick': Bio.Phylo},
+    parameters={'otu_metadata': pd.DataFrame},
     name='Visualize phylogram',
     description='Generate interactive visualization of your phylogenetic tree.'
 )
