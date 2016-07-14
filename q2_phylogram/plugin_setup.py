@@ -108,7 +108,7 @@ def make_d3_phylogram(output_dir: str, tree: Bio.Phylo, otu_metadata: pd.DataFra
         os.makedirs(out_dir)
     with open(os.path.join(root,'index.html'), 'w') as fout:
         fout.write(index)
-    os.system('cp %s %s/tree.tre' %(Newick, out_dir))
+    os.system('cp %s %s/tree.tre' %(tree, out_dir))
     if OTU_metadata:
         os.system('cp %s %s/mapping.txt' %(OTU_metadata, out_dir))
 
