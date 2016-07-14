@@ -20,7 +20,7 @@ setup(
     license="BSD",
     url="http://www.qiime.org",
     entry_points={
-        'qiime.plugin':
+        'qiime.plugins':
         ['q2-phylogram=q2_phylogram.plugin_setup:plugin']
     }
 )
