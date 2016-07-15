@@ -19,13 +19,15 @@ examples:
 """
 import importlib
 
+import qiime
 from qiime.plugin import Plugin
 from q2_phylogram import __version__
+from q2_types import Phylogeny
 
 # IMPORTS
 import sys, os, argparse, traceback
 import pandas as pd
-import Bio
+import Bio.Phylo.Newick
 
 
 template = '''
@@ -65,19 +67,13 @@ template = '''
 </html>
 '''
 
-def tree_to_biopython_phylo(data_dir):
-    with open(os.path.join(data_dir, 'tree.nwk'), 'r') as fh:
-        return Bio.Phylo.read(fh, 'newick')
-
-plugin.register_data_layout_reader('tree', 1, Bio.Phylo, tree_to_biopython_phylo)
-
-
 
 
 # ------------------------------------------------------------------------------------------------------------#
 # ------------------------------------------------- MAIN -----------------------------------------------------#
 # ------------------------------------------------------------------------------------------------------------#
-def make_d3_phylogram(output_dir: str, tree: Bio.Phylo, otu_metadata: pd.DataFrame) -> None:
+def make_d3_phylogram(output_dir: str, tree: Bio.Phylo.Newick.Tree, otu_metadata: qiime.Metadata) -> None:
+    otu_metadata = otu_metadata.to_dataframe()
 
     # ERROR CHECK INPUTS
     if otu_metadata:
@@ -128,8 +124,15 @@ plugin = Plugin(
 )
 
 plugin.visualizers.register_function(
-    function=q2_phylogram.make_d3_phylogram,
-    inputs={'tree': Bio.Phylo, 'otu_metadata': pd.DataFrame},
+    function=make_d3_phylogram,
+    inputs={'tree': Phylogeny},
+    parameters={'otu_metadata': qiime.plugin.Metadata},
     name='Visualize phylogram',
     description='Generate interactive visualization of your phylogenetic tree.'
 )
+
+def tree_to_biopython_tree(data_dir):
+    with open(os.path.join(data_dir, 'tree.nwk'), 'r') as fh:
+        return Bio.Phylo.read(fh, 'newick')
+
+plugin.register_data_layout_reader('tree', 1, Bio.Phylo.Newick.Tree, tree_to_biopython_tree)
