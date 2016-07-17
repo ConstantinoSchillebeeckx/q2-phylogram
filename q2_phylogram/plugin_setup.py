@@ -28,7 +28,7 @@ from q2_types import Phylogeny
 import sys, os, argparse, traceback
 import pandas as pd
 import Bio.Phylo.Newick
-
+import Bio.Phylo
 
 template = '''
 <!doctype html>
@@ -73,15 +73,14 @@ template = '''
 # ------------------------------------------------- MAIN -----------------------------------------------------#
 # ------------------------------------------------------------------------------------------------------------#
 def make_d3_phylogram(output_dir: str, tree: Bio.Phylo.Newick.Tree, otu_metadata: qiime.Metadata) -> None:
-    otu_metadata = otu_metadata.to_dataframe()
+    output_dir = '.'
+
+    mapping_df = otu_metadata.to_dataframe()
 
     # ERROR CHECK INPUTS
-    if otu_metadata:
+    if isinstance(mapping_df, pd.DataFrame):
 
-        tree = Phylo.read(tree, 'newick')
         leaves = set([l.name for l in tree.find_clades() if l.name])
-
-        mapping_df = pd.read_csv(otu_metadata, sep='\t', index_col=0)
         mapping_otus = set(mapping_df.index)
 
         if leaves > mapping_otus:
@@ -89,7 +88,7 @@ def make_d3_phylogram(output_dir: str, tree: Bio.Phylo.Newick.Tree, otu_metadata
 
 
     # CONSTRUCT BODY TAG
-    if OTU_metadata:
+    if isinstance(mapping_df, pd.DataFrame):
         body = '<body onload="init(\'dat/tree.tre\', \'#phylogram\', \'dat/mapping.txt\');">' 
     else:
         body = '<body onload="init(\'dat/tree.tre\', \'#phylogram\');">' 
@@ -98,19 +97,21 @@ def make_d3_phylogram(output_dir: str, tree: Bio.Phylo.Newick.Tree, otu_metadata
 
 
     # WRITE ALL OUR FILES
-    root = os.path.join(output_dir,'phylogram_d3')
-    out_dir = os.path.join(root,'dat')
-    if not os.path.exists(out_dir):
-        os.makedirs(out_dir)
-    with open(os.path.join(root,'index.html'), 'w') as fout:
+    # index.html, tree.tre, mapping.txt (optional)
+    dat_dir = os.path.join(output_dir,'dat')
+    if not os.path.exists(dat_dir):
+        os.makedirs(dat_dir)
+    with open(os.path.join(output_dir,'index.html'), 'w') as fout:
         fout.write(index)
-    os.system('cp %s %s/tree.tre' %(tree, out_dir))
-    if OTU_metadata:
-        os.system('cp %s %s/mapping.txt' %(OTU_metadata, out_dir))
+    tree_out = os.path.join(dat_dir, 'tree.tre')
+    Bio.Phylo.write(tree, tree_out, 'newick')
+    if isinstance(mapping_df, pd.DataFrame):
+        mapping_out = os.path.join(dat_dir, 'mapping.txt')
+        mapping_df.to_csv(mapping_out, sep='\t')
 
 
     # FEEDBACK
-    print("All your files have been written to the directory", root)
+    print("All your files have been written to the directory", output_dir)
     print("Simply open the file index.html in a browser that has")
     print("an internet connection to view the interactive phylogram.")
 
