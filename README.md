@@ -5,8 +5,10 @@ Installing: ```pip install https://github.com/ConstantinoSchillebeeckx/q2-phylog
 
 ## Usage
 
-Convert input Newick tree to QIIME2 artifact
+Convert input Newick tree to QIIME2 artifact:
+
 ```qiime tools import --type Phylogeny --input-path example/tree.tre --output-path tree.qza```
 
-Generate visualization
+Generate visualization:
+
 ```qiime phylogram make_d3_phylogram --tree tree.qza --otu-metadata-file example/mapping.txt --visualization viz.qzv```
