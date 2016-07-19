@@ -27,8 +27,7 @@ from q2_types import Phylogeny
 # IMPORTS
 import sys, os, argparse, traceback
 import pandas as pd
-import Bio.Phylo.Newick
-import Bio.Phylo
+import skbio
 
 template = '''
 <!doctype html>
@@ -40,7 +39,7 @@ template = '''
         <!-- CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
-        <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
+        <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans" />
         <link href="https://cdn.rawgit.com/MasterMaps/d3-slider/master/d3.slider.css" rel="stylesheet">
         <link href="https://cdn.rawgit.com/ConstantinoSchillebeeckx/phylogram_d3/master/css/phylogram_d3.css" rel="stylesheet">
 
@@ -72,30 +71,30 @@ template = '''
 # ------------------------------------------------------------------------------------------------------------#
 # ------------------------------------------------- MAIN -----------------------------------------------------#
 # ------------------------------------------------------------------------------------------------------------#
-def make_d3_phylogram(output_dir: str, tree: Bio.Phylo.Newick.Tree, otu_metadata: qiime.Metadata) -> None:
+def make_d3_phylogram(output_dir: str, tree: skbio.TreeNode, otu_metadata: qiime.Metadata) -> None:
 
     mapping_df = otu_metadata.to_dataframe()
 
     # ERROR CHECK INPUTS
     if isinstance(mapping_df, pd.DataFrame):
 
-        leaves = set([l.name for l in tree.find_clades() if l.name])
+        leaves = set([l for l in tree.traverse() if l.is_tip()])
         mapping_otus = set(mapping_df.index)
 
         if leaves > mapping_otus:
-            print("\n *** ATTENTION *** ")
-            print("Not all leaves were found in the OTU mapping file; as a consequence, these leaves cannot be styled.")
-            print("\n *** ATTENTION *** \n")
+            print("\n*** NOTE *** ")
+            print("Not all leaves were found in the OTU mapping file; as a consequence, these leaves cannot be styled.\n")
 
 
     # CONSTRUCT BODY TAG
-    tree = "'dat/tree.tre'"
+    dat_tree = "treeTre" # because of cross-origin issues, the Newick tree is stored in this var
     div = "'#phylogram'"
-    mapping = "'dat/mapping.txt'"
+    dat_mapping = "'dat/mapping.txt'"
+    body = "<script>var treeTre = '%s';</script>\n" %str(tree).strip()
     if isinstance(mapping_df, pd.DataFrame):
-        body = '<body onload="init(%s, %s, %s);">' %(tree, div, mapping)
+        body += '\t<body onload="init(%s, %s, %s);">' %(dat_tree, div, dat_mapping)
     else:
-        body = '<body onload="init(%s, %s);">' %(tree, div)
+        body += '\t<body onload="init(%s, %s);">' %(dat_tree, div)
 
     index = template.replace('REPLACE',body) # html to write to index.html
 
@@ -107,18 +106,11 @@ def make_d3_phylogram(output_dir: str, tree: Bio.Phylo.Newick.Tree, otu_metadata
         os.makedirs(dat_dir)
     with open(os.path.join(output_dir,'index.html'), 'w') as fout:
         fout.write(index)
-    tree_out = os.path.join(dat_dir, 'tree.tre')
-    Bio.Phylo.write(tree, tree_out, 'newick')
     if isinstance(mapping_df, pd.DataFrame):
         mapping_out = os.path.join(dat_dir, 'mapping.txt')
         mapping_df.to_csv(mapping_out, sep='\t')
 
 
-    # FEEDBACK
-    print("All your files have been written to: ", output_dir)
-
-
-    return none
 
 
 plugin = Plugin(
@@ -136,8 +128,8 @@ plugin.visualizers.register_function(
     description='Generate interactive visualization of your phylogenetic tree.'
 )
 
-def tree_to_biopython_tree(data_dir):
+def tree_to_skbio_tree(data_dir):
     with open(os.path.join(data_dir, 'tree.nwk'), 'r') as fh:
-        return Bio.Phylo.read(fh, 'newick')
+        return read(fh, format="newick", into=TreeNode)
 
-plugin.register_data_layout_reader('tree', 1, Bio.Phylo.Newick.Tree, tree_to_biopython_tree)
+plugin.register_data_layout_reader('tree', 1, skbio.TreeNode, tree_to_skbio_tree)
