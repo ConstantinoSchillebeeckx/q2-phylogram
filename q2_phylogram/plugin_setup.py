@@ -73,7 +73,6 @@ template = '''
 # ------------------------------------------------- MAIN -----------------------------------------------------#
 # ------------------------------------------------------------------------------------------------------------#
 def make_d3_phylogram(output_dir: str, tree: Bio.Phylo.Newick.Tree, otu_metadata: qiime.Metadata) -> None:
-    output_dir = '.'
 
     mapping_df = otu_metadata.to_dataframe()
 
@@ -84,14 +83,19 @@ def make_d3_phylogram(output_dir: str, tree: Bio.Phylo.Newick.Tree, otu_metadata
         mapping_otus = set(mapping_df.index)
 
         if leaves > mapping_otus:
+            print("\n *** ATTENTION *** ")
             print("Not all leaves were found in the OTU mapping file; as a consequence, these leaves cannot be styled.")
+            print("\n *** ATTENTION *** \n")
 
 
     # CONSTRUCT BODY TAG
+    tree = "'dat/tree.tre'"
+    div = "'#phylogram'"
+    mapping = "'dat/mapping.txt'"
     if isinstance(mapping_df, pd.DataFrame):
-        body = '<body onload="init(\'dat/tree.tre\', \'#phylogram\', \'dat/mapping.txt\');">' 
+        body = '<body onload="init(%s, %s, %s);">' %(tree, div, mapping)
     else:
-        body = '<body onload="init(\'dat/tree.tre\', \'#phylogram\');">' 
+        body = '<body onload="init(%s, %s);">' %(tree, div)
 
     index = template.replace('REPLACE',body) # html to write to index.html
 
@@ -111,10 +115,10 @@ def make_d3_phylogram(output_dir: str, tree: Bio.Phylo.Newick.Tree, otu_metadata
 
 
     # FEEDBACK
-    print("All your files have been written to the directory", output_dir)
-    print("Simply open the file index.html in a browser that has")
-    print("an internet connection to view the interactive phylogram.")
+    print("All your files have been written to: ", output_dir)
 
+
+    return none
 
 
 plugin = Plugin(
