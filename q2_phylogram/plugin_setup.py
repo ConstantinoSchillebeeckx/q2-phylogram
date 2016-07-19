@@ -40,7 +40,7 @@ template = '''
         <!-- CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
-        <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans" />
+        <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,700,800" />
         <link href="https://cdn.rawgit.com/MasterMaps/d3-slider/master/d3.slider.css" rel="stylesheet">
         <link href="https://cdn.rawgit.com/ConstantinoSchillebeeckx/phylogram_d3/master/css/phylogram_d3.css" rel="stylesheet">
 
@@ -52,7 +52,8 @@ template = '''
         <script src="https://d3js.org/d3.v3.min.js"></script>
         <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
         <script type="text/javascript" src="https://cdn.rawgit.com/MasterMaps/d3-slider/master/d3.slider.js"></script>
-        <script type="text/javascript" src="https://cdn.rawgit.com/ConstantinoSchillebeeckx/phylogram_d3/master/js/phylogram_d3.js"></script>
+        <script type="text/javascript" src="https://cdn.rawgit.com/d3/d3-plugins/master/jsonp/jsonp.js"></script>
+        <script type="text/javascript" src="https://rawgit.com/ConstantinoSchillebeeckx/phylogram_d3/master/js/phylogram_d3.js"></script>
         <script type="text/javascript" src="https://cdn.rawgit.com/ConstantinoSchillebeeckx/phylogram_d3/master/js/utils.js"></script>
 
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -88,14 +89,13 @@ def make_d3_phylogram(output_dir: str, tree: skbio.TreeNode, otu_metadata: qiime
 
 
     # CONSTRUCT BODY TAG
-    dat_tree = "treeTre" # because of cross-origin issues, the Newick tree is stored in this var
-    div = "'#phylogram'"
-    dat_mapping = "'dat/mapping.txt'"
-    body = "<script>var treeTre = '%s';</script>\n" %str(tree).strip()
+    dat_tree = '"dat/tree.tre"'
+    div = '"#phylogram"'
+    dat_mapping = '{"mapping_dat" : %s}' %mapping_df.reset_index().to_json(orient="records")
     if isinstance(mapping_df, pd.DataFrame):
-        body += '\t<body onload="init(%s, %s, %s);">' %(dat_tree, div, dat_mapping)
+        body = "\t<body onload='init(%s, %s, %s);'>" %(dat_tree, div, dat_mapping)
     else:
-        body += '\t<body onload="init(%s, %s);">' %(dat_tree, div)
+        body = "\t<body onload='init(%s, %s);'>" %(dat_tree, div)
 
     index = template.replace('REPLACE',body) # html to write to index.html
 
@@ -107,9 +107,9 @@ def make_d3_phylogram(output_dir: str, tree: skbio.TreeNode, otu_metadata: qiime
         os.makedirs(dat_dir)
     with open(os.path.join(output_dir,'index.html'), 'w') as fout:
         fout.write(index)
-    if isinstance(mapping_df, pd.DataFrame):
-        mapping_out = os.path.join(dat_dir, 'mapping.txt')
-        mapping_df.to_csv(mapping_out, sep='\t')
+    tree_out = os.path.join(dat_dir,'tree.tre')
+    with open(tree_out, 'w') as fout:
+        fout.write("d3.jsonp.readNewick('%s');" %str(tree).strip()) # add callback around Newick string for use in cross-origin setting
 
 
 
