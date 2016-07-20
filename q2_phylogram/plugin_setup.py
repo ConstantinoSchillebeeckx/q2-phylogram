@@ -54,6 +54,7 @@ template = '''
         <script type="text/javascript" src="https://cdn.rawgit.com/MasterMaps/d3-slider/master/d3.slider.js"></script>
         <script type="text/javascript" src="https://cdn.rawgit.com/d3/d3-plugins/master/jsonp/jsonp.js"></script>
         <script type="text/javascript" src="https://rawgit.com/ConstantinoSchillebeeckx/phylogram_d3/master/js/phylogram_d3.js"></script>
+        <script type="text/javascript" src="https://rawgit.com/ConstantinoSchillebeeckx/phylogram_d3/master/js/q2_phylogram.js.js"></script> <!-- must be called after phylogram_d3.js because it will replace the init() function for use in cross-origin -->
         <script type="text/javascript" src="https://cdn.rawgit.com/ConstantinoSchillebeeckx/phylogram_d3/master/js/utils.js"></script>
 
         <meta name="viewport" content="width=device-width, initial-scale=1">
