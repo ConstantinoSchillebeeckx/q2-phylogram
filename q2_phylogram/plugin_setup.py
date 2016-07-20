@@ -11,11 +11,6 @@ description:
     Helper script for generating all the files needed to view
     the interactive D3 phylogram (https://github.com/ConstantinoSchillebeeckx/phylogram_d3).
 
-examples:
-
-    make_d3_phylogram.py newick.tre -m otu_mapping.txt
-    make_d3_phylogram.py newick.tre -m otu_mapping.txt -o data_dir
-
 """
 import importlib
 
@@ -36,6 +31,15 @@ template = '''
 
     <head>
         <title>q2-phylogram</title>
+
+        <!--
+        Note that, when used as a QIIME2 plugin, cross-origin issues could arise when loading local files (e.g. Newick tree
+        and mapping file).  To get around this, a seperate version of the init() function is loaded (from q2_phylogram.js)
+        that uses JSONP to load the Newick tree.  When this is the case, the tree file contents must be wrapped in the
+        d3.jsonp.readNewick() callback function.  Furthermore, the mapping file is parsed into a JSON object and stored as
+        as the javascript var within options.mapping_dat.  This should alleviate any cross-origin issues while at the same
+        time leaving the original phylogram_d3 repo in its original state (e.g. being able to read classical Newick trees)
+        -->
 
         <!-- CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
@@ -92,7 +96,7 @@ def make_d3_phylogram(output_dir: str, tree: skbio.TreeNode, otu_metadata: qiime
     # CONSTRUCT BODY TAG
     dat_tree = '"dat/tree.tre"'
     div = '"#phylogram"'
-    dat_mapping = '{"mapping_dat" : %s}' %mapping_df.reset_index().to_json(orient="records")
+    dat_mapping = '{"mapping_dat" : %s}' %mapping_df.reset_index().to_json(orient="records") # store the mapping file in the options obj
     if isinstance(mapping_df, pd.DataFrame):
         body = "\t<body onload='init(%s, %s, %s);'>" %(dat_tree, div, dat_mapping)
     else:
