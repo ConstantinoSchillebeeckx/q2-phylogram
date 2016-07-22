@@ -11,4 +11,8 @@ Convert input Newick tree to QIIME2 artifact:
 
 Generate visualization:
 
-```qiime phylogram make_d3_phylogram --tree tree.qza --otu-metadata-file demo/mapping.txt --visualization viz.qzv```
+```qiime phylogram make-d3-phylogram --i-tree tree.qza --m-otu-metadata-file demo/mapping.txt --o-visualization viz.qzv```
+
+View visualization:
+
+```qiime tools view viz.qzv```

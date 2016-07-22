@@ -23,6 +23,7 @@ from q2_types import Phylogeny
 import sys, os, argparse, traceback
 import pandas as pd
 import skbio
+import skbio.io
 
 template = '''
 <!doctype html>
@@ -136,6 +137,6 @@ plugin.visualizers.register_function(
 
 def tree_to_skbio_tree(data_dir):
     with open(os.path.join(data_dir, 'tree.nwk'), 'r') as fh:
-        return read(fh, format="newick", into=TreeNode)
+        return skbio.io.read(fh, format="newick", into=skbio.TreeNode)
 
 plugin.register_data_layout_reader('tree', 1, skbio.TreeNode, tree_to_skbio_tree)
